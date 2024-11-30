@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { Redis } from "ioredis";
-
+import {produceMessage} from './kafka'
 
 const pub = new Redis({
     host: 'redis-17205.c14.us-east-1-3.ec2.redns.redis-cloud.com',
@@ -48,10 +48,12 @@ class SocketService {
 
         });
 
-        sub.on('message', (channel, message) => {
+        sub.on('message', async(channel, message) => {
             if (channel === "MESSAGES") {
                 io.emit('message', message);
                 console.log("New Message publishing ", message);
+                await produceMessage(message)
+                console.log('Message produced to kafka broker')
 
             }
         })

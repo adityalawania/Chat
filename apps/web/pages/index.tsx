@@ -1,20 +1,23 @@
 'use client'
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState,useRef, lazy } from "react";
 import { useSocket } from "../context/SocketProvider"
 import styles from "../styles/page.module.css";
 
 import { BrowserRouter, Link, Route ,Routes} from "react-router-dom";
 import { useRouter } from "next/router";
-// import Chat from "./Chat";
+
 import { useSession, signIn, signOut } from 'next-auth/react';
-import googleLogo from "../public/icons8-google-logo-96.png"
+
 import prisma from "../../server/src/config/db.config";
+import Loading from "./loading";
 
 
 export default function Page({userData}:any) {
   
   const [ user,setUser]= useState('')
   const [ problem,setProblem]= useState(false)
+  const [ loading,setLoading]= useState(true)
+
 
 
   let dbIssue=false;
@@ -36,7 +39,7 @@ export default function Page({userData}:any) {
   
 
   const createUser=async(myUser:any)=>{
-    // console.log(myUser);
+
     let userFound=false;
     if(userData=="Problem"){
    
@@ -50,12 +53,9 @@ export default function Page({userData}:any) {
     if(userData)
     userData.map((ele:any)=>{
       if(ele.email==myUser.email){
-        userFound=true;
-        router.push
+        userFound=true;   
       }
-      else{
-        console.log(ele.email)
-      }
+ 
     })
 
     if(userFound==false){
@@ -97,9 +97,10 @@ if (response.ok) {
   
 
   useEffect(()=>{
-    if(session.data){
+    if(session.data)
+    {
 
-      //  console.log(session.data)
+
       createUser(session.data.user);
     
       if(dbIssue==false){
@@ -114,15 +115,16 @@ if (response.ok) {
   
          })
       }
-
-      // console.log(session.data)
+   
+    }
+    else{
+      setTimeout(() => {
+        
+        setLoading(false);
+      }, 2000);
     }
   })
 
-
-  useEffect(()=>{
-    
-  },[])
 
 
 //   function getdis(lat1 :any, lon1:any, lat2:any, lon2:any,) {
@@ -189,14 +191,16 @@ if (response.ok) {
 
 if(problem) return <h1 style={{fontFamily:'Montserrat'}}>Error while connecting to DB... Try with different wifi !</h1>
 
+if(loading) return <Loading/>
+
  return(
   <div  className={styles.landing}>
     <h1>Welcome to the World of GC's</h1>
     <p>Continue to start your first GC</p>
-    {/* <div onClick={()=>signUP('google')}>Google</div> */}
+  
     <form onSubmit={(e)=>e.preventDefault()}>
 
-    <button onClick={()=>signUP('google')}><img src={`https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png`}/>Continue with Google</button>
+    <button onClick={()=>signUP('google')}><img src='/icons8-google-logo-96.png'/>Continue with Google</button>
 
     </form>
     
@@ -214,11 +218,12 @@ export async function getServerSideProps(context:any) {
   
 
   try{
+    console.log("trying")
     let userData= await prisma.user.findMany();
    
     console.log("no problem")
     return {
-     props: {userData:JSON.parse(JSON.stringify(userData))}, // will be passed to the page component as props
+     props: {userData:JSON.parse(JSON.stringify(userData))}, 
    
     }
   }

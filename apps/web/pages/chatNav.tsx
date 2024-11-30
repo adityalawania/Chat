@@ -1,29 +1,35 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styles from "../styles/page.module.css"
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import prisma from '../../server/src/config/db.config';
 import  Loading from './loading'
 import Router from 'next/router';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function Navbar({data}:any) {
+export default function Navbar({grpData , userData}:any) {
     const session = useSession();
+    
     const createGrpRef = useRef<HTMLDivElement | null>(null);
     const JoinGrpRef = useRef<HTMLDivElement | null>(null);
+    const small_LoadingRef = useRef<HTMLDivElement | null>(null);
 
     const [grpName, setGrpName] = useState('')
-    const [grpKey, setGrpKey] = useState('')
+    const [grpId, setGrpId] = useState()
+    const [grpPasword, setGrpPassword] = useState('')
+
 
     const [privacy, setprivate] = useState(false)
     const [adminId, setadminId] = useState(0);
     const [adminName, setadminName] = useState('');
-
+  
 
     // let max=0;
     useEffect(()=>{
-        // console.log(data)
+
         setTimeout(() => {
-            data.map((ele:any)=>{
+            userData.map((ele:any)=>{
                 if(ele.email==session.data?.user?.email){
                     setadminId(ele.id)
                     setadminName(ele.name)
@@ -31,30 +37,26 @@ export default function Navbar({data}:any) {
                 }
        
             })
+
         }, 2000);
+
+
     },[])
 
     const createGroup = async() => 
     {
-
-        let random = Math.floor(Math.random()*1000000)+"";
-        console.log(random);
         
-        console.log(adminId+" "+adminName)
-   
-        if(grpName=='') return;
+        let random = Math.floor(Math.random()*1000000)+"";
+        
+        if(grpName=='') {
+            toast.error('Please Enter some name',{
+                autoClose:1500
+            })
+
+            return;
+        };
 
      
-        createGrpRef?.current?.children[0]?.children[4]?.children[0]?.classList.add('page-module__g8GY5a__show')
-        createGrpRef?.current?.children[0]?.children[4]?.children[1]?.classList.add('page-module__g8GY5a__hide')
-
-        
-        
-        setTimeout(() => {
-            createGrpRef?.current?.children[0]?.children[4]?.children[0]?.classList.remove('page-module__g8GY5a__show')
-            createGrpRef?.current?.classList.add('page-module__g8GY5a__hide')
-            
-        }, 2300);
         try {
             console.log("sending data...");
             const response = await fetch('/api/addGroup', {
@@ -75,6 +77,7 @@ export default function Navbar({data}:any) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("Group create:", data);
+                Router.reload();
             } else {
                 console.error("Failed to create group:", response);
             }
@@ -84,66 +87,118 @@ export default function Navbar({data}:any) {
         catch (err) {
             console.log("errr hai nbhao9")
         }
-
-Router.reload();
+   
         
-
+        
+        
     }
+    
+    const joinGroup = async() => {
 
-    const joinGroup = () => {
-        JoinGrpRef?.current?.children[0]?.children[3]?.children[0]?.classList.add('page-module__g8GY5a__show')
-        JoinGrpRef?.current?.children[0]?.children[3]?.children[1]?.classList.add('page-module__g8GY5a__hide')
 
-        setTimeout(() => {
-            createGrpRef?.current?.children[0]?.children[3]?.children[0]?.classList.remove('page-module__g8GY5a__show')
-            createGrpRef?.current?.classList.add('page-module__g8GY5a__hide')
+        
+        let flag =false;
+        grpData.map((el:any)=>{
+            if(el.id==grpId){
+                if(el.password == grpPasword){
+                    flag=true;
+  
+                }
+                else{
+                    flag=false;
+                }
+                return ;
+            }
+       })
+
+       if(!flag){
+
+           toast.error("Invalid Credentials",{autoClose:1600})
+       }
+       else{
+
+        try {
+            console.log("sending data...");
+            const response = await fetch('/api/addMember', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    gId: Number(grpId),
+                    memberId: adminId,
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Group Joined:", data);
+                toast.success("Group Joined",{
+                    autoClose:1600
+                })
+
+                Router.reload();
+                
+            } else {
+                console.error("Failed to join group:", response);
+            }
             
-        }, 2300);
-
-
+        }
+        
+        catch (err) {
+            console.log("errr hai nbhao9")
+        }
+        
+        
+    }
+ 
 
     }
+
     return (
         <div className={styles.chatNav}>
+            <ToastContainer />
             <div className={styles.navBar}>
                 <div className={styles.navBtn}>
-            
+                
                     <button onClick={()=>createGrpRef?.current?.classList.add('page-module__g8GY5a__show')}>Create</button>
                     <button onClick={()=>JoinGrpRef?.current?.classList.add('page-module__g8GY5a__show')}>Join</button>
                 </div>
                 <div className={styles.navInfo}>
-                    <span>{session.data?.user?.name}</span>
+                    <span>{session.data?.user?.email}</span>
                     <button onClick={() => signOut({ callbackUrl: 'http://localhost:3000' })}>Logout</button>
                 </div>
             </div>
 
-            <div className={styles.createGroupCont} ref={createGrpRef}>
-                <div className={styles.createGroup}>
+            <div className={styles.modalCont} ref={createGrpRef}>
+                <div className={styles.modal}>
+                    <img src='/cross.png' onClick={()=>createGrpRef?.current?.classList.remove('page-module__g8GY5a__show')}/>
                     <h2>Create Group</h2>
-                    <input type="text" placeholder='Enter Name' value={grpName} onChange={(e) => setGrpName(e.target.value)} />
+                    <input type="text" placeholder='Enter Name' value={grpName} onKeyDown={(event)=>event.key === 'Enter' ? createGroup() :""} onChange={(e) => setGrpName(e.target.value)} />
                     <p>Private</p>
                     <label className={styles.switch} >
-                        <input type="checkbox" onClick={() => { setprivate(!privacy); console.log(privacy) }} />
+                        <input type="checkbox" onClick={() => { setprivate(!privacy)}} />
                         <span className={styles.slider}></span>
                     </label>
                     <button onClick={createGroup}>
                         
-                        <Loading/>
+                        
+           
                         <span>Create</span>
                         </button>
                 </div>
             </div>
 
-            <div className={styles.createGroupCont} ref={JoinGrpRef}>
-                <div className={styles.createGroup}>
+            <div className={styles.modalCont} ref={JoinGrpRef}>
+                <div className={styles.modal}>
+                    <img src='/cross.png' onClick={()=>JoinGrpRef?.current?.classList.remove('page-module__g8GY5a__show')}/>
                     <h2>Join Group</h2>
-                    <input type="text" placeholder='Enter Group Id' value={grpName} onChange={(e) => setGrpName(e.target.value)} />
-                    <input type="text" placeholder='Enter Group Password' value={grpKey} onChange={(e) => setGrpKey(e.target.value)} />
+                    <input type="number" placeholder='Enter Group Id' value={grpId} onChange={(e) => setGrpId(e.target.value)} />
+                    <input type="number" placeholder='Enter Group Password' value={grpPasword} onChange={(e) => setGrpPassword(e.target.value)} />
 
         
                     <button onClick={joinGroup}>
                         
-                        <Loading/>
+                  
                         <span>Join</span>
                         </button>
                 </div>

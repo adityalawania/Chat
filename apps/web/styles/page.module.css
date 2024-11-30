@@ -93,15 +93,49 @@
  
 }
 
+.emojiCont{
+  position: absolute;
+  left: 1px;
+  bottom: -20px;
+  background-color: rgb(0, 0, 0);
+  padding: 15px;
+  width: 30vw;
+  display: none;
+}
+.emoji{
+  position: relative;
+  top: 88px;
+  left: 15px;
+  z-index: 1;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  
+}
+.emoji:hover{
+  cursor: pointer;
+}
+
+
+.emojiCont span{
+  margin-right: 5px;
+  margin-top: 5px;
+
+}
+
+.emojiCont span:hover{
+  cursor: pointer;
+}
 .inp{
   /* margin-top: 300px; */
-  width: 50vw;
+  width: 47vw;
   height: 30px;
   padding: 10px;
   background-color: white;
   color: black;
   position: fixed;
- right:6vw;
+  right:6vw;
+
  font-family: 'Anuphan';
  top: 92vh;
   font-size: 18px;
@@ -110,6 +144,7 @@
   outline: none;
   border-radius: 24px;
   padding: 8px;
+  padding-left: 52px;
 }
 
 .btn{
@@ -118,20 +153,25 @@
   width: 75px;
   height: 46px;
   color: white;
- border-radius: 18px;
+ border-radius: 12px;
   border: none;
   position: relative;
   top: 79px;
   font-size: 18px;
   font-family: 'Poppins';
-
-
+  font-weight: 600;
   float: right;
 }
 
 .btn:hover{
   cursor: pointer;
   background-color: rgb(179, 0, 0);
+}
+
+.msgBoxCont{
+  display: flex;
+  flex-direction: column-reverse; /* Reverse the stacking order */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .msgBox{
@@ -147,10 +187,14 @@
 padding-top: 30px;
 top: 9vh;
 left: 2px;
+overflow: hidden;
 overflow-y: auto;
+scroll-behavior:auto;
 
 
 }
+
+
 
 .msgBox::-webkit-scrollbar{
   appearance: none;
@@ -158,6 +202,7 @@ overflow-y: auto;
 
 .messageEnd {
   margin-top: 120px; /* Adjust as necessary */
+  
 }
 
 
@@ -387,33 +432,58 @@ font-size: 11px;
 
 }
 
-.createGroupCont{
+.modalCont{
    background-color: rgba(0, 0, 0, 0.891);
+   
+
    position: absolute;
    top: 0px;
    width: 100vw;
-   height: 90vh;
+   height: 100vh;
    padding-top: 10vh;
-   z-index: 2;
+   z-index: 12;
    display: none;
+   position: fixed; 
+
+}
+
+.modalCont img{
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  right: 10px;
+}
+
+.modalCont img:hover{
+  cursor: pointer;
+}
+
+.modalCont input[type=number]::-webkit-inner-spin-button, 
+.modalCont input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+   
 }
 
 
-.createGroup{
-  background-color: white;
+.modal{
+  background-color: rgb(255, 255, 255);
   color: black;
   font-family: 'Poppins';
   width: 30vw;
-  height: 30vh;
+  height: fit-content;
+  
   padding: 15px;
+  padding-bottom: 50px;
   border-radius: 9px;
-  position: absolute; 
+  position: fixed; 
   left: 37%; 
-  top: 30%;
+  bottom: 41%;
  
 }
 
-.createGroup input{
+.modal input{
   padding: 5px;
   border-radius: 5px;
  border: 2px solid grey;
@@ -489,7 +559,7 @@ input:checked + .slider:before {
   margin: 0 auto;
 }
 
-.createGroup button{
+.modal button{
   background-color: rgb(245, 0, 0);
   color: white;;
   border: none;
@@ -504,32 +574,33 @@ input:checked + .slider:before {
   left: 39%;
 }
 
-.createGroup button:hover{
+.modal button:hover{
   cursor: pointer;
   
 } 
 
 .loaderParent{
-  background-color: rgb(255, 255, 255);
+ /* background-color: rgba(28, 28, 28, 0.831); */
   width: 100vw;
   height:100vh;
+  position: fixed;
 
 }
 .loader {
   border: 4px solid #f4f4f4;
   border-radius: 50%;
-  z-index: 10;
-  border-top: 4px solid rgb(96, 30, 172);
+  
+  border-top: 4px solid rgb(184, 13, 13);
   width: 40px;
   height: 40px;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
+  -webkit-animation: spin 2s linear infinite; 
   animation: spin 1s linear infinite;
   position: absolute;
   top: 42%;
   left: 48%;
 
-  /* display: none; */
-  z-index: 3;
+  
+  z-index: 8;
   
 }
 
@@ -545,15 +616,6 @@ input:checked + .slider:before {
 
 }
 
-.smallLoader{
-  border-top: 4px solid rgb(255, 0, 0); 
-  width: 20px;
-  height: 20px;
-  position: relative;
- left: 26px;
- display: none;
-
-}
 
 .show{
   display: block;
@@ -603,6 +665,7 @@ flex-direction: column-reverse;
   font-size: 23px;
   font-family: 'Poppins';
   display: inline;
+
 }
 
 .grpBox span{
@@ -613,6 +676,20 @@ flex-direction: column-reverse;
 
 }
 
+.grpBox img{
+
+  height: 20px;
+  width: 20px;
+  display: inline;
+  
+  /* top: 1px; */
+  position: absolute;
+  
+  right: 20px;
+ margin-top: -49px;
+  
+  
+}
 .msgBoxHead{
   /* z-index: 4; */
   color: rgb(15, 15, 15);
@@ -636,7 +713,7 @@ flex-direction: column-reverse;
 .msgBoxHead button{
   /* padding: 20px; */
   border-radius: 8px;
-  width: 65px;
+  width: fit-content;
   height: 48px;
   font-size: 16px;
   background-color: red;
@@ -665,3 +742,4 @@ flex-direction: column-reverse;
   margin-right: 3px;
   font-family: 'Anuphan';
 }
+

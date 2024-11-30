@@ -23,6 +23,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "kafkajs": "^2.2.4",
     "next-auth": "^4.24.10"
   }
 }
