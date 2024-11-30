@@ -46,7 +46,7 @@ export async function startConsumer() {
         eachMessage:async({message,pause})=>{
             console.log("New Message recieved at kafka ...")
             let jsonString = message.value?.toString('utf-8');
-         
+           
             
             let inpObj =jsonString ? JSON.parse(jsonString) : {};
 

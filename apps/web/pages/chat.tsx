@@ -204,9 +204,10 @@ const emojis = [
 
     
     setMsg('')
-   
+    
     try {
       // sendMessage(obj)
+      
       sendMessage(newObj);
 
       // This post request will continues after kafka server will get ended :
@@ -453,9 +454,43 @@ const emojis = [
 
     setEmojiCont(!toggleEmoji)
   }
-
   
+  const toggleDelete=async(i:number,j:number)=>{
+    if(j==1){
+      messages.splice(i,1);
+      i=i+activeGrp.messages.length;
+    }
+    else{
+      activeGrp.messages.splice(i,1);
+    }
 
+    console.log(i)
+      try {
+        console.log("sending data...");
+        const response = await fetch('/api/deleteMsg', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: Number(currGrpId),
+                msgIdx: i,
+            }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            // console.log("Group Leaved:", data);
+           
+        } else {
+            // console.error("Failed to leave group:", response);
+           
+        }
+    }
+    catch(err){}
+  
+  setRender(!render)
+  
+ }
 
   if (problem) return <h1 style={{ fontFamily: 'Montserrat' }}>Error while connecting to DB... Try with different wifi !</h1>
 
@@ -572,6 +607,8 @@ const emojis = [
                 return (
                   <div key={id}>
                     <div className={styles.Outmsg} key={id}>
+                     
+                    <img onClick={()=>toggleDelete(id,0)} src="delete.png"/>
                       <span>{el.message}</span>
                       <span>{el.time}</span>
                     </div>
@@ -607,7 +644,10 @@ const emojis = [
                 if (element.msgobj.email == myDetails.email) {
                   return (
                     <div key={id}>
+                      
                       <div className={styles.Outmsg} key={id}>
+                   
+                      <img onClick={()=>toggleDelete(id,1)} src="delete.png"/>
                         <span>{element.msgobj.message}</span>
                         <span>{element.msgobj.time}</span>
                       </div>

@@ -1,0 +1,22 @@
+{
+    "projects": [
+      {
+        "name": "web",                  
+        "source": "app/web",           
+        "buildCommand": "npm run build",
+        "outputDirectory": ".next"
+      },
+      {
+        "name": "server",             
+        "source": "app/server",       
+        "buildCommand": "npm run build",
+        "outputDirectory": "dist",
+        "functions": {
+          "api/**/*.js": {
+            "runtime": "nodejs18.x"    
+          }
+        }
+      }
+    ]
+  }
+  

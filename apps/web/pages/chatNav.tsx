@@ -16,7 +16,7 @@ export default function Navbar({grpData , userData}:any) {
     const small_LoadingRef = useRef<HTMLDivElement | null>(null);
 
     const [grpName, setGrpName] = useState('')
-    const [grpId, setGrpId] = useState()
+    const [grpId, setGrpId] = useState('')
     const [grpPasword, setGrpPassword] = useState('')
 
 
