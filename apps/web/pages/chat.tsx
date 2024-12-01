@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import styles from "../styles/page.module.css";
 
 import { useSocket } from "../context/SocketProvider";
-import { useSession, getSession } from "next-auth/react";
+import { useSession, getSession, signOut } from "next-auth/react";
 import Navbar from "./chatNav";
 import prisma from "../../server/src/config/db.config";
 import Loading from "./loading";
@@ -101,12 +101,29 @@ const emojis = [
 
   useEffect(() => {
     
+    
+    if(session){
+      
+      const expiryTime = new Date(session.expires).getTime();
+      const currentTime = Date.now();
+      
+      if (currentTime >= expiryTime) {
+   
+        signOut({ callbackUrl: 'http://localhost:3000' })
+        
+      } else {
+        console.log("Session is active.");
+      }
+    }
+    
     let sessionDetails = session?.user;
+
     let user = {
       email: sessionDetails?.email ? sessionDetails?.email : '',
       name: sessionDetails?.name ? sessionDetails?.name : ''
     };
 
+ 
     setMyDetails(user);
     setTimeout(() => {
       setLoading(false);
@@ -231,9 +248,6 @@ const emojis = [
       // }
 
     }
-
-
-
     catch (err) {
       console.log("errr hai nbhao9")
     }
@@ -328,7 +342,7 @@ const emojis = [
     else {
       
       try {
-        console.log("sending data...");
+
         const response = await fetch('/api/addMember', {
           method: 'POST',
           headers: {
@@ -341,15 +355,13 @@ const emojis = [
         });
         if (response.ok) {
           const data = await response.json();
-          console.log("Group Joined:", data);
-        } else {
-          console.error("Failed to add member:", response);
+        
         }
 
       }
 
       catch (err) {
-        console.log("errr hai nbhao9")
+   
       }
 
       toast.success("Group Joined", { autoClose: 1600 })
@@ -385,16 +397,14 @@ const emojis = [
         });
         if (response.ok) {
           const data = await response.json();
-          console.log("Group deleted:", data);
-        } else {
-          console.error("Failed to delete group:", response);
+
         }
         Router.reload();
 
       }
 
       catch (err) {
-        console.log("errr hai nbhao9")
+      
       }
 
      
@@ -408,7 +418,7 @@ const emojis = [
 
   const leaveGrp = async() => {
     try {
-      console.log("sending data...");
+      
       const response = await fetch('/api/leaveGroup', {
           method: 'POST',
           headers: {
@@ -421,13 +431,12 @@ const emojis = [
       });
       if (response.ok) {
           const data = await response.json();
-          console.log("Group Leaved:", data);
+        
           toast.success("Group Leaved Successfully !",{
             autoClose:1600
           })
       } else {
-          console.error("Failed to leave group:", response);
-          toast.error("Failed to leave group !",{
+            toast.error("Failed to leave group !",{
             autoClose:1600
           })
       }
@@ -439,7 +448,7 @@ const emojis = [
   }
 
   catch (err) {
-      console.log("errr hai nbhao9")
+
   }
   }
 
@@ -463,10 +472,8 @@ const emojis = [
     else{
       activeGrp.messages.splice(i,1);
     }
-
-    console.log(i)
       try {
-        console.log("sending data...");
+        
         const response = await fetch('/api/deleteMsg', {
             method: 'POST',
             headers: {
@@ -479,12 +486,9 @@ const emojis = [
         });
         if (response.ok) {
             const data = await response.json();
-            // console.log("Group Leaved:", data);
+       
            
-        } else {
-            // console.error("Failed to leave group:", response);
-           
-        }
+        } 
     }
     catch(err){}
   
@@ -721,7 +725,7 @@ export async function getServerSideProps(context: any) {
     }
   }
   catch (err) {
-    console.log("nok")
+    
 
     return {
       props: { grpData: "Problem" }

@@ -18,7 +18,7 @@ export default function Page({userData}:any) {
   const [ problem,setProblem]= useState(false)
   const [ loading,setLoading]= useState(true)
 
-
+  
 
   let dbIssue=false;
 
@@ -29,7 +29,7 @@ export default function Page({userData}:any) {
   const router= useRouter()
 
   const signUP=async(provider:any)=>{
-    console.log("in func")
+    
     signIn(provider,{callbackUrl:'https://localhost:3000'})
     signIn(provider)
     
@@ -61,7 +61,7 @@ export default function Page({userData}:any) {
     if(userFound==false){
 
   try{
-      console.log("sending data...");
+      
 const response = await fetch('/api/addUser', {
   method: 'POST',
   headers: {
@@ -75,16 +75,14 @@ const response = await fetch('/api/addUser', {
 });
 if (response.ok) {
   const data = await response.json();
-  console.log("User added:", data);
-} else {
-  console.error("Failed to add user:", response.statusText);
-}
+
+} 
     
     }
 
     catch(err)
     {
-      console.log("errr hai nbhao9")
+     
     }
 
 
@@ -218,10 +216,9 @@ export async function getServerSideProps(context:any) {
   
 
   try{
-    console.log("trying")
+ 
     let userData= await prisma.user.findMany();
-   
-    console.log("no problem")
+ 
     return {
      props: {userData:JSON.parse(JSON.stringify(userData))}, 
    

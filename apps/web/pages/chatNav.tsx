@@ -58,7 +58,7 @@ export default function Navbar({grpData , userData}:any) {
 
      
         try {
-            console.log("sending data...");
+
             const response = await fetch('/api/addGroup', {
                 method: 'POST',
                 headers: {
@@ -76,16 +76,13 @@ export default function Navbar({grpData , userData}:any) {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("Group create:", data);
+      
                 Router.reload();
-            } else {
-                console.error("Failed to create group:", response);
-            }
-
+            } 
         }
 
         catch (err) {
-            console.log("errr hai nbhao9")
+          
         }
    
         
@@ -118,7 +115,7 @@ export default function Navbar({grpData , userData}:any) {
        else{
 
         try {
-            console.log("sending data...");
+          
             const response = await fetch('/api/addMember', {
                 method: 'POST',
                 headers: {
@@ -131,7 +128,7 @@ export default function Navbar({grpData , userData}:any) {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("Group Joined:", data);
+              
                 toast.success("Group Joined",{
                     autoClose:1600
                 })
@@ -139,13 +136,13 @@ export default function Navbar({grpData , userData}:any) {
                 Router.reload();
                 
             } else {
-                console.error("Failed to join group:", response);
+               
             }
             
         }
         
         catch (err) {
-            console.log("errr hai nbhao9")
+           
         }
         
         
